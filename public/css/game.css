@@ -7,60 +7,11 @@
 
 body {
     font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    /* 美国国旗配色背景 */
-    background: linear-gradient(180deg, 
-        #B22234 0%,     /* 红色 */
-        #B22234 14.28%, /* 红 */
-        #FFFFFF 14.28%, /* 白色 */
-        #FFFFFF 28.56%, /* 白 */
-        #B22234 28.56%, /* 红 */
-        #B22234 42.84%, /* 红 */
-        #FFFFFF 42.84%, /* 白色 */
-        #FFFFFF 57.12%, /* 白 */
-        #B22234 57.12%, /* 红 */
-        #B22234 71.4%,   /* 红 */
-        #FFFFFF 71.4%,   /* 白色 */
-        #FFFFFF 85.68%, /* 白 */
-        #B22234 85.68%, /* 红 */
-        #B22234 100%    /* 红 */
-    );
+    /* 背景使用国旗图片；center/cover 铺满视口，比例不符时居中裁切 */
+    background: #B22234 url('../assets/flag-background.svg') center / cover no-repeat;
     position: relative;
     min-height: 100vh;
     overflow-x: hidden;
-}
-
-/* 蓝色区域（左上角） - 添加模糊和变暗 */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 40%;
-    height: 53.85%;
-    background: #3C3B6E; /* 美国国旗蓝 */
-    z-index: -1;
-    box-shadow: 0 0 50px rgba(60, 59, 110, 0.5);
-    filter: blur(20px) brightness(0.9);
-    opacity: 0.85;
-}
-
-/* 白头鹰装饰 - 添加模糊和半透明 */
-body::after {
-    content: '🦅';
-    position: fixed;
-    top: 50%;
-    right: 5%;
-    transform: translateY(-50%);
-    font-size: 150px;
-    opacity: 0.12;
-    z-index: -1;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)) blur(10px);
-    animation: eagleFloat 3s ease-in-out infinite;
-}
-
-@keyframes eagleFloat {
-    0%, 100% { transform: translateY(-50%) rotate(0deg); }
-    50% { transform: translateY(-55%) rotate(5deg); }
 }
 
 /* 屏幕切换 */

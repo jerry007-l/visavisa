@@ -1,5 +1,5 @@
 // Service Worker - 离线缓存
-const CACHE_NAME = 'visa-game-v9';
+const CACHE_NAME = 'visa-game-v10';
 const ASSETS = [
     '/',
     '/index.html',
@@ -29,6 +29,7 @@ const ASSETS = [
     '/js/randomEventHandle.js',
     '/js/achievement.js',
     '/js/selfCheck.js',
+    '/assets/flag-background.svg',
     '/assets/icon.png',
     '/assets/icon-192.png',
     '/assets/icon-512.png'
