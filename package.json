@@ -1,0 +1,19 @@
+{
+  "name": "visa-sim-offline",
+  "version": "3.0.0",
+  "description": "面签三分钟 - 单机版签证模拟游戏",
+  "scripts": {
+    "start": "node server/src/index.js",
+    "dev": "nodemon server/src/index.js",
+    "test": "node tools/selftest.js",
+    "test:data": "node tools/validate-data.js",
+    "check": "node tools/validate-data.js && node tools/selftest.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

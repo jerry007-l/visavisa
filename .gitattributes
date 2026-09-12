@@ -1,0 +1,7 @@
+# 本机全局设置了 core.autocrlf = true，而仓库里的行尾是混着的：
+# public/ 下所有文件和 package.json 是 CRLF，tools/*.js 是 LF。
+# 统一声明 -text，让 git 按原始字节存取，避免提交/检出时改写换行、产生虚假 diff。
+* -text
+
+# 二进制资源显式标注，同时关掉文本 diff
+*.png binary

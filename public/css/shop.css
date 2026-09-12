@@ -1,0 +1,159 @@
+/* 商店样式 */
+.shop-container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 800px;
+    width: 90%;
+}
+
+.coin-info {
+    text-align: center;
+    font-size: 1.3em;
+    color: #F39C12;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.time-limit {
+    text-align: center;
+    font-size: 1.1em;
+    color: #E74C3C;
+    margin-bottom: 20px;
+}
+
+.shop-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.shop-item {
+    background: linear-gradient(135deg, #ECF0F1 0%, #BDC3C7 100%);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+}
+
+.shop-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.shop-item.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.shop-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.item-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.item-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.item-desc {
+    font-size: 0.9em;
+    color: #7F8C8D;
+    margin-bottom: 10px;
+}
+
+.shop-item.selected .item-desc {
+    color: #ECF0F1;
+}
+
+.item-price {
+    font-size: 1.2em;
+    color: #F39C12;
+    font-weight: bold;
+}
+
+.shop-item.selected .item-price {
+    color: #FFD700;
+}
+
+/* 类别标题 */
+.item-category {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #3C3B6E;
+    margin-top: 20px;
+    padding: 10px;
+    border-bottom: 2px solid #3C3B6E;
+}
+
+.item-category:first-child {
+    margin-top: 0;
+}
+
+/* 贿赂道具特殊样式 */
+.bribe-item {
+    background: linear-gradient(135deg, #FFEAA7 0%, #FDcb6e 100%);
+    border: 3px dashed #E74C3C;
+    animation: bribePulse 1.5s ease-in-out infinite;
+}
+
+.bribe-item:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(231, 76, 60, 0.4);
+    border-style: solid;
+}
+
+.bribe-item.selected {
+    background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+    color: white;
+    border-color: #FFFFFF;
+}
+
+@keyframes bribePulse {
+    0%, 100% {
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+    }
+    50% {
+        box-shadow: 0 10px 30px rgba(231, 76, 60, 0.5);
+    }
+}
+
+.bribe-warning {
+    font-size: 0.85em;
+    color: #E74C3C;
+    font-weight: bold;
+    margin-top: 8px;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    text-align: center;
+}
+
+.bribe-item.selected .bribe-warning {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.my-items {
+    margin-top: 20px;
+    padding: 15px;
+    background: #F8F9FA;
+    border-radius: 10px;
+}
+
+.my-items h3 {
+    color: #2C3E50;
+    margin-bottom: 10px;
+}

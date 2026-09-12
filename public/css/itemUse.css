@@ -1,0 +1,106 @@
+/* 道具使用环节样式 */
+.item-use-container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 800px;
+    width: 90%;
+}
+
+.item-use-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.item-use-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.item-use-actions .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.item-use-actions .btn-secondary {
+    background: #95a5a6;
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.item-use-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.item-use-actions .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(149, 165, 166, 0.4);
+}
+
+/* 已使用的道具样式 */
+.shop-item.used {
+    opacity: 0.6;
+    filter: grayscale(50%);
+    position: relative;
+}
+
+.use-status {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #F39C12;
+}
+
+.shop-item.used .use-status {
+    color: #27AE60;
+}
+
+.item-effect {
+    font-size: 0.85em;
+    color: #8e44ad;
+    margin-top: 8px;
+    padding: 5px 10px;
+    background: rgba(142, 68, 173, 0.1);
+    border-radius: 5px;
+    display: inline-block;
+}
+
+/* 选中/未选中的状态提示 */
+.shop-item::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #BDC3C7;
+    border: 2px solid white;
+    transition: all 0.3s ease;
+}
+
+.shop-item:not(.used)::after {
+    background: #3498db;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+.shop-item.used::after {
+    background: #27AE60;
+    content: '✓';
+}

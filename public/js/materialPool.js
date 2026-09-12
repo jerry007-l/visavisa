@@ -1,0 +1,27 @@
+// 材料池 - 20种材料含伪造版本
+const MATERIAL_POOL = [
+    { id: 'passport', name: '护照', icon: '📘', desc: '个人护照原件', fakeChance: 0.1 },
+    { id: 'bank_cert', name: '银行存款证明', icon: '🏦', desc: '银行开具的资金证明', fakeChance: 0.5 },
+    { id: 'employment_cert', name: '在职证明', icon: '💼', desc: '公司出具的工作证明', fakeChance: 0.4 },
+    { id: 'invitation', name: '邀请函', icon: '📨', desc: '美国方发出的邀请信', fakeChance: 0.6 },
+    { id: 'flight_ticket', name: '返程机票', icon: '✈️', desc: '已支付的往返机票', fakeChance: 0.2 },
+    { id: 'travel_insurance', name: '旅行保险', icon: '📋', desc: '覆盖全程的旅游保险', fakeChance: 0.3 },
+    { id: 'household_reg', name: '户口本', icon: '📄', desc: '家庭户口登记', fakeChance: 0.1 },
+    { id: 'graduation_cert', name: '毕业证', icon: '🎓', desc: '学历学位证书', fakeChance: 0.5 },
+    { id: 'social_security', name: '社保缴纳记录', icon: '📊', desc: '近年社保缴费凭证', fakeChance: 0.2 },
+    { id: 'asset_cert', name: '资产证明', icon: '🏠', desc: '房产车辆等资产证明', fakeChance: 0.3 },
+    { id: 'tax_record', name: '纳税证明', icon: '💰', desc: '个人所得税缴纳记录', fakeChance: 0.2 },
+    { id: 'degree_cert', name: '学位证', icon: '📜', desc: '学位证书原文', fakeChance: 0.4 },
+    { id: 'transcript', name: '成绩单', icon: '📝', desc: '在校学习成绩单', fakeChance: 0.3 },
+    { id: 'marriage_cert', name: '结婚证', icon: '💒', desc: '婚姻状况证明', fakeChance: 0.1 },
+    { id: 'birth_cert', name: '出生证明', icon: '👶', desc: '个人出生医学证明', fakeChance: 0.1 },
+    { id: 'resume', name: '个人简历', icon: '📃', desc: '最新个人简历CV', fakeChance: 0.2 },
+    { id: 'offer_letter', name: '工作Offer', icon: '📩', desc: '美国公司录用通知书', fakeChance: 0.7 },
+    { id: 'conference_inv', name: '会议邀请', icon: '🎫', desc: '学术会议参加邀请', fakeChance: 0.4 },
+    { id: 'bank_statement', name: '银行流水', icon: '📑', desc: '近半年银行账户流水', fakeChance: 0.4 },
+    { id: 'company_reg', name: '营业执照', icon: '🏢', desc: '公司注册证明文件', fakeChance: 0.5 },
+    { id: 'property_deed', name: '房产证', icon: '🏡', desc: '房屋产权证书', fakeChance: 0.3 },
+    { id: 'vehicle_reg', name: '车辆登记证', icon: '🚗', desc: '汽车注册登记证书', fakeChance: 0.1 },
+    { id: 'investment_cert', name: '投资理财证明', icon: '📈', desc: '股票基金理财持有证明', fakeChance: 0.3 },
+    { id: 'guarantor_letter', name: '担保函', icon: '🤝', desc: '美国担保人出具的担保信', fakeChance: 0.6 }
+];
