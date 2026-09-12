@@ -1,5 +1,5 @@
 // Service Worker - 离线缓存
-const CACHE_NAME = 'visa-game-v21';
+const CACHE_NAME = 'visa-game-v22';
 const ASSETS = [
     '/',
     '/index.html',
