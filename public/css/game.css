@@ -78,8 +78,15 @@ body::after {
 
 .screen.active {
     display: flex;
-    align-items: center;
+    /* 交叉轴不能用 center：内容比视口高时，溢出会均分到上下，而顶部溢出
+       落在滚动区之外永远滚不到（商店首行被裁就是这个原因）。居中改由子元素
+       margin:auto 实现：有富余空间时效果相同，超高时归零、顶部可达。 */
+    align-items: flex-start;
     justify-content: center;
+}
+
+.screen.active > * {
+    margin: auto;
 }
 
 @keyframes fadeIn {
