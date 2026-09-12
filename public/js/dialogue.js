@@ -223,12 +223,14 @@ const Dialogue = {
         
         if (correct) {
             Game.state.score += 5;
-            SoundManager.play('success');
+            // 签证官提问时无论选哪个选项都统一只播鼠标点击声（上面已 play('click')），
+            // 不再按对错追加 success/fail；申请人角色保留原有的对错音效
+            if (!isOfficer) SoundManager.play('success');
         } else {
             // 📜 法律免责声明：扣分打八折
             const penalty = Game.state.lenientScoring ? 8 : 10;
             Game.state.score -= penalty;
-            SoundManager.play('fail');
+            if (!isOfficer) SoundManager.play('fail');
         }
         
         Game.state.score = Math.max(0, Math.min(100, Game.state.score));
