@@ -1,0 +1,88 @@
+/* 结算界面样式 */
+.result-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+}
+
+#ResultTitle {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+}
+
+.result-success {
+    color: #27AE60;
+}
+
+.result-failure {
+    color: #E74C3C;
+}
+
+.result-content {
+    margin: 20px 0;
+    padding: 20px;
+    background: #F8F9FA;
+    border-radius: 15px;
+}
+
+.result-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-item {
+    background: #ECF0F1;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.stat-label {
+    color: #7F8C8D;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    color: #2C3E50;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.achievement-unlocks {
+    margin: 20px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border-radius: 15px;
+    color: white;
+}
+
+.achievement-unlocks h3 {
+    margin-bottom: 15px;
+}
+
+.achievement-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.achievement-item {
+    background: white;
+    color: #2C3E50;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.coin-change {
+    font-size: 1.5em;
+    color: #F39C12;
+    margin: 20px 0;
+    font-weight: bold;
+}

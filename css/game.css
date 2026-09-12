@@ -1,0 +1,718 @@
+/* 面签三分钟 - 主样式表 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    /* 背景使用国旗图片；center/cover 铺满视口，比例不符时居中裁切 */
+    background: #B22234 url('../assets/flag-background.svg') center / cover no-repeat;
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* 屏幕切换 */
+.screen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease;
+}
+
+.screen.active {
+    display: flex;
+    /* 交叉轴不能用 center：内容比视口高时，溢出会均分到上下，而顶部溢出
+       落在滚动区之外永远滚不到（商店首行被裁就是这个原因）。居中改由子元素
+       margin:auto 实现：有富余空间时效果相同，超高时归零、顶部可达。 */
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.screen.active > * {
+    margin: auto;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 主菜单 */
+.menu-container {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(60, 59, 110, 0.4);
+    border-top: 5px solid #B22234;
+    border-bottom: 5px solid #3C3B6E;
+}
+
+.game-title {
+    font-size: 2.5em;
+    color: #3C3B6E; /* 蓝色标题 */
+    margin-bottom: 10px;
+    animation: bounce 1s infinite;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.game-subtitle {
+    color: #7F8C8D;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3C3B6E 0%, #2D2C5A 100%); /* 蓝色 */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(60, 59, 110, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(60, 59, 110, 0.5);
+    background: linear-gradient(135deg, #4F4E7A 0%, #3C3B6E 100%);
+}
+
+.btn-secondary {
+    background: rgba(178, 34, 52, 0.1); /* 红色半透明 */
+    color: #3C3B6E;
+    border: 2px solid #B22234; /* 红色边框 */
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: rgba(178, 34, 52, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(178, 34, 52, 0.2);
+}
+
+/* "音效"按钮：继承自 .btn-secondary 的 0.3s 全属性过渡让点击反馈显得迟钝，
+   这里收窄为 0.08s 的形变过渡并加按压态，使点击立刻可见 */
+#soundToggleBtn {
+    transition: transform 0.08s ease, background 0.3s ease,
+                box-shadow 0.3s ease, opacity 0.2s ease, border-color 0.2s ease;
+}
+
+#soundToggleBtn:active {
+    transform: scale(0.94);
+    box-shadow: none;
+}
+
+/* 关闭态：与右侧引导提示的虚线边框呼应，避免"没在出声却看起来是开启的" */
+#soundToggleBtn.sound-off {
+    opacity: 0.62;
+    border-style: dashed;
+}
+
+#soundToggleBtn.sound-off:hover {
+    opacity: 0.85;
+}
+
+.btn-back {
+    background: transparent;
+    color: #7F8C8D;
+    border: 2px solid #BDC3C7;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.coin-display {
+    margin-top: 30px;
+    font-size: 1.3em;
+    color: #F39C12;
+    font-weight: bold;
+}
+
+/* 角色选择 */
+.role-container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 800px;
+    width: 90%;
+    text-align: center;
+}
+
+/* 操作区白底面板：抽奖/审核/问答/决策四个容器此前无背景，
+   国旗背景下标题与提示文字直接压在条纹上难以辨认 */
+.draw-container,
+.review-container,
+.dialogue-container,
+.decision-container {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    box-shadow: 0 15px 50px rgba(60, 59, 110, 0.3);
+}
+
+.draw-container {
+    max-width: 600px;
+}
+
+.review-container,
+.dialogue-container,
+.decision-container {
+    max-width: 800px;
+}
+
+.role-container h2 {
+    color: #2C3E50;
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+.role-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.role-card {
+    background: linear-gradient(135deg, #ECF0F1 0%, #BDC3C7 100%);
+    border-radius: 15px;
+    padding: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+}
+
+.role-card:hover {
+    transform: translateY(-10px);
+    border-color: #667eea;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.role-icon {
+    font-size: 4em;
+    margin-bottom: 15px;
+}
+
+.role-card h3 {
+    color: #2C3E50;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.role-card p {
+    color: #7F8C8D;
+    margin-bottom: 15px;
+}
+
+.role-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.role-features span {
+    background: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    color: #2C3E50;
+}
+
+/* 按钮样式 */
+.btn-approve {
+    background: linear-gradient(135deg, #27AE60 0%, #2ECC71 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.1em;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-reject {
+    background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.1em;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* 通用布局 */
+.container {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 800px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(60, 59, 110, 0.3);
+}
+
+h2 {
+    color: #3C3B6E;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 2em;
+}
+
+.hint-text {
+    color: #7F8C8D;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 计时器 */
+.timer-bar {
+    width: 100%;
+    height: 10px;
+    background: #ECF0F1;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+    position: relative;
+}
+
+.timer-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #F39C12 0%, #E74C3C 100%);
+    transition: width 1s linear;
+}
+
+#TimerText {
+    position: absolute;
+    right: 0;
+    top: -25px;
+    font-weight: bold;
+    color: #2C3E50;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .screen {
+        padding: 10px;
+    }
+    
+    .menu-container,
+    .role-container,
+    .draw-container,
+    .review-container,
+    .dialogue-container,
+    .decision-container {
+        padding: 20px;
+    }
+    
+    .game-title {
+        font-size: 2em;
+    }
+    
+    .role-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 商店额外样式 */
+.btn-option {
+    background: #ECF0F1;
+    border: 2px solid #BDC3C7;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.btn-option:hover {
+    background: #BDC3C7;
+    transform: translateX(5px);
+}
+
+/* 材料卡片 */
+.material-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.material-card {
+    background: linear-gradient(135deg, rgba(60, 59, 110, 0.1) 0%, rgba(178, 34, 52, 0.1) 100%);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid #3C3B6E;
+}
+
+.material-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(60, 59, 110, 0.3);
+    border-color: #B22234;
+}
+
+.material-icon {
+    font-size: 4em;
+    margin-bottom: 10px;
+}
+
+.material-status {
+    margin-top: 10px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* 对话系统 */
+.question-area {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 5px solid #B22234; /* 红色左侧边框 */
+    box-shadow: 0 5px 15px rgba(60, 59, 110, 0.2);
+}
+
+.question-text {
+    font-size: 1.2em;
+    color: #3C3B6E;
+    margin-bottom: 10px;
+}
+
+.question-hint {
+    color: #7F8C8D;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.answer-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.dialogue-history {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    background: #F8F9FA;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+/* 随机事件 */
+.event-container {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 15px 50px rgba(60, 59, 110, 0.3);
+    margin: auto;
+}
+
+.event-content {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 5px solid #B22234;
+    min-height: 100px;
+}
+
+.event-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.btn-event-choice {
+    background: linear-gradient(135deg, rgba(60, 59, 110, 0.1) 0%, rgba(178, 34, 52, 0.1) 100%);
+    border: 2px solid #3C3B6E;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    font-size: 1em;
+    color: #3C3B6E;
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(60, 59, 110, 0.2);
+}
+
+.btn-event-choice:hover {
+    background: linear-gradient(135deg, rgba(60, 59, 110, 0.2) 0%, rgba(178, 34, 52, 0.2) 100%);
+    transform: translateX(10px);
+    box-shadow: 0 5px 20px rgba(178, 34, 52, 0.3);
+    border-color: #B22234;
+}
+
+/* 事件结果弹窗：选择后浮在最上层展示已选选项的效果，2 秒后自动关闭 */
+.event-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.event-modal {
+    background: white;
+    border-radius: 15px;
+    padding: 25px 30px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.event-modal-title {
+    font-size: 1.05em;
+    font-weight: bold;
+    color: #7F8C8D;
+    margin-bottom: 8px;
+}
+
+.event-modal-chosen {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #3C3B6E;
+    margin-bottom: 15px;
+}
+
+.event-modal-line {
+    margin: 8px 0;
+    padding: 10px;
+    background: #F8F9FA;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #3C3B6E;
+}
+
+/* 决策界面 */
+.decision-summary {
+    background: #F8F9FA;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.score-display {
+    font-size: 3em;
+    font-weight: bold;
+    color: #667eea;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.decision-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.answers-list {
+    margin-top: 15px;
+}
+
+.answer-item {
+    padding: 10px;
+    margin: 5px 0;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.answer-item.correct {
+    border-left: 3px solid #27AE60;
+}
+
+.answer-item.wrong {
+    border-left: 3px solid #E74C3C;
+}
+
+/* 抽奖机 */
+.slot-machine {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 30px 0;
+}
+
+.slot-item {
+    font-size: 5em;
+    text-align: center;
+    animation: spin 2s ease-in-out;
+}
+
+@keyframes spin {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+}
+
+/* 音乐引导提示：浏览器禁止无交互自动播放，放在"音效"按钮右侧、用左向箭头引导点击开启 */
+.menu-sound-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.music-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(178, 34, 52, 0.08);
+    color: #3C3B6E;
+    font-size: 0.95em;
+    font-weight: bold;
+    border: 2px dashed #B22234;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    animation: hintFadeIn 0.4s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+}
+
+.music-hint-arrow {
+    display: inline-block;
+    font-size: 1.2em;
+    animation: hintBounce 1s ease-in-out infinite;
+}
+
+.music-hint.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(8px);
+}
+
+@keyframes hintBounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-5px); }
+}
+
+@keyframes hintFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 成就界面 */
+.achievement-container {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 720px;
+    width: 92%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(60, 59, 110, 0.4);
+    border-top: 5px solid #B22234;
+    border-bottom: 5px solid #3C3B6E;
+}
+
+.achievement-container h2 {
+    color: #3C3B6E;
+    margin-bottom: 6px;
+}
+
+.achievement-progress {
+    color: #7F8C8D;
+    margin-bottom: 18px;
+}
+
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    text-align: left;
+    margin-bottom: 22px;
+}
+
+.achievement-card {
+    border-radius: 12px;
+    padding: 14px;
+    background: #F8F9FA;
+    border: 2px solid transparent;
+}
+
+.achievement-card.unlocked {
+    background: #FFF8E1;
+    border-color: #F1C40F;
+}
+
+.achievement-card.locked {
+    opacity: 0.65;
+}
+
+.achievement-card-name {
+    font-weight: bold;
+    color: #2C3E50;
+    margin-bottom: 6px;
+}
+
+.achievement-card-desc {
+    font-size: 0.88em;
+    color: #7F8C8D;
+    margin-bottom: 8px;
+}
+
+.achievement-card-state {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.achievement-card.unlocked .achievement-card-state {
+    color: #27AE60;
+}
+
+.achievement-card.locked .achievement-card-state {
+    color: #95A5A6;
+}
