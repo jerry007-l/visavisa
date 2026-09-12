@@ -25,7 +25,7 @@ npm start
 3. Safari: 点击分享按钮 -> "添加到主屏幕"
 
 ### APK打包
-参见 [APK打包教程](./APK打包教程.md)
+仓库未附带该教程；打包方案为 Capacitor，可查阅其官方文档。
 
 ## 🎯 游戏特色
 
@@ -70,6 +70,7 @@ npm start
 ├── server/             # 服务器（仅提供静态资源）
 │   └── src/index.js
 ├── package.json
+├── docs/               # 功能说明与修复记录（26 篇）
 └── README.md
 ```
 
