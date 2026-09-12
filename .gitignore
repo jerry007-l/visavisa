@@ -1,8 +1,19 @@
-# package.json 声明了 express / cors / nodemon，当前目录未安装
+# 依赖目录
 node_modules/
+
+# npm 日志
 npm-debug.log*
 
 # 系统垃圾文件
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# 临时文件和截图
+.vercel-tmp/
+*.png
+*.jpg
+*.jpeg
+
+# Vercel 配置（不需要）
+vercel.json
