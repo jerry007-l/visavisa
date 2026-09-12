@@ -147,6 +147,29 @@ body {
     text-align: center;
 }
 
+/* 操作区白底面板：抽奖/审核/问答/决策四个容器此前无背景，
+   国旗背景下标题与提示文字直接压在条纹上难以辨认 */
+.draw-container,
+.review-container,
+.dialogue-container,
+.decision-container {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    box-shadow: 0 15px 50px rgba(60, 59, 110, 0.3);
+}
+
+.draw-container {
+    max-width: 600px;
+}
+
+.review-container,
+.dialogue-container,
+.decision-container {
+    max-width: 800px;
+}
+
 .role-container h2 {
     color: #2C3E50;
     margin-bottom: 30px;
@@ -284,7 +307,11 @@ h2 {
     }
     
     .menu-container,
-    .role-container {
+    .role-container,
+    .draw-container,
+    .review-container,
+    .dialogue-container,
+    .decision-container {
         padding: 20px;
     }
     
