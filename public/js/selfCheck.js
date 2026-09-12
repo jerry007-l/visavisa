@@ -15,7 +15,7 @@ window.selfCheck = function selfCheck() {
     // ---------- 模块检查 ----------
     console.log('\n📦 模块检查:');
     const modules = {
-        Game, Chat, SoundManager, AudioInit, UserData, RoleSelect,
+        Game, SoundManager, AudioInit, UserData, RoleSelect,
         Shop, DrawMaterials, MaterialReview, Dialogue, Decision, Result,
         RandomEvents, Achievement, ItemQuickUse, IdentityPool
     };
@@ -49,8 +49,6 @@ window.selfCheck = function selfCheck() {
         ['Game.revealClue', Game.revealClue],
         ['Game.revealMaterialTruth', Game.revealMaterialTruth],
         ['Game.backToMain', Game.backToMain],
-        ['Chat.addMessage', Chat.addMessage],
-        ['Chat.reset', Chat.reset],
         ['SoundManager.play', SoundManager.play],
         ['IdentityPool.getRandom', IdentityPool.getRandom],
         ['DrawMaterials.draw', DrawMaterials.draw],
@@ -84,7 +82,7 @@ window.selfCheck = function selfCheck() {
         'OfficerTools', 'QuestionArea', 'AnswerOptions', 'CurrentRound', 'TotalRounds',
         'TimerBar', 'TimerText', 'EventTitle', 'EventContent', 'EventChoices',
         'DecisionSummary', 'ResultTitle', 'ResultContent', 'AchievementUnlocks',
-        'ChatMessages', 'ChatInput', 'ItemQuickUseBtn'
+        'ItemQuickUseBtn'
     ].forEach(id => report(!!document.getElementById(id), '#' + id,
         document.getElementById(id) ? '存在' : '缺失'));
 

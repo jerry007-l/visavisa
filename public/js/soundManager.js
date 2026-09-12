@@ -383,10 +383,8 @@ const SoundManager = {
         
         if (newState) {
             this.unmute();
-            Chat.addMessage('system', '🔊 音效已开启');
         } else {
             this.mute();
-            Chat.addMessage('system', '🔇 音效已关闭');
         }
     },
     

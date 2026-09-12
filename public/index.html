@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="css/game.css">
     <link rel="stylesheet" href="css/shop.css">
     <link rel="stylesheet" href="css/itemQuickUse.css">
-    <link rel="stylesheet" href="css/chat.css">
     <link rel="stylesheet" href="css/result.css">
     <!-- PWA配置 - 使用http/https协议的占位符 -->
     <script src="js/userData.js"></script>
@@ -189,22 +188,6 @@
         </div>
     </div>
 
-    <!-- 聊天面板 -->
-    <div id="chatPanel" class="chat-panel">
-        <div class="chat-header">
-            <span>💬 聊天记录</span>
-            <button onclick="Chat.toggle()">✕</button>
-        </div>
-        <div id="ChatMessages" class="chat-messages"></div>
-        <div class="chat-input">
-            <input type="text" id="ChatInput" placeholder="输入消息..." maxlength="100">
-            <button onclick="Chat.send()">发送</button>
-        </div>
-    </div>
-
-    <!-- 聊天按钮 -->
-    <button id="ChatToggle" class="chat-toggle-btn" onclick="Chat.toggle()">💬</button>
-    
     <!-- 道具快捷使用按钮 -->
     <button id="ItemQuickUseBtn" class="item-quick-use-btn" onclick="ItemQuickUse.toggle()" style="display: none;">🎒</button>
 
@@ -217,7 +200,6 @@
     <script src="js/dialogue.js"></script>
     <script src="js/decision.js"></script>
     <script src="js/result.js"></script>
-    <script src="js/chat.js"></script>
     <script src="js/randomEventHandle.js"></script>
     <script src="js/achievement.js"></script>
     <script src="js/selfCheck.js"></script>

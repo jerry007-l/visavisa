@@ -53,7 +53,6 @@ const Game = {
         }
         
         // 添加欢迎消息
-        Chat.addMessage('system', '🔊 游戏开始！点击页面任意位置启用音效');
     },
     
     // 切换屏幕
@@ -92,7 +91,6 @@ const Game = {
         this.state.startCoins = this.state.coins;
         
         // 添加系统消息
-        Chat.addMessage('system', `你选择了${role === 'officer' ? '签证官' : '申请人'}角色，AI将扮演对方`);
         
         // 申请人身份必须在抽材料之前就位：材料真伪要根据他是否清白来决定
         if (role === 'officer') {
@@ -120,7 +118,6 @@ const Game = {
         SoundManager.init();
         SoundManager.play('success');
             
-        Chat.addMessage('system', '道具购买完成!现在开始材料抽奖');
         this.showScreen('materialDraw');
         DrawMaterials.renderMaterials();
     },
@@ -152,7 +149,6 @@ const Game = {
             this.state.materialFake[mat.id] = guilty && Math.random() < mat.fakeChance * skill;
         });
             
-        Chat.addMessage('system', `抽到了:${materials.map(m => m.name).join('、')}。准备进入材料审核环节`);
             
         // 显示确认按钮
         const confirmBtn = document.querySelector('#materialDraw .btn-secondary');
@@ -166,7 +162,6 @@ const Game = {
         SoundManager.init(); // 初始化音频
         SoundManager.play('click');
             
-        Chat.addMessage('system', '材料审核环节开始!请仔细检查每一份材料');
         this.showScreen('materialReview');
         MaterialReview.renderMaterials();
     },
@@ -181,7 +176,6 @@ const Game = {
             console.log('当前角色:', this.state.playerRole);
             console.log('drawnMaterials:', this.state.drawnMaterials);
                 
-            Chat.addMessage('system', '材料审核完成!现在开始对话问答环节');
             this.showScreen('dialogue');
                 
             // 确保 Dialogue 对象存在
@@ -204,8 +198,7 @@ const Game = {
     generateApplicantIdentity() {
         const identity = IdentityPool.getRandom();
         this.state.applicantIdentity = identity;
-        // 身份的真实信息必须对签证官保密，否则聊天面板直接剧透答案
-        Chat.addMessage('system', '🧳 申请人已进入面谈室，身份未知');
+        // 身份的真实信息必须对签证官保密，否则等于直接剧透答案
     },
     
     // 揭露线索（供随机事件与签证官道具调用）
@@ -218,11 +211,9 @@ const Game = {
         
         revealed.forEach(clue => {
             this.state.revealedClues.push(clue);
-            Chat.addMessage('system', `💡 线索：${clue}`);
         });
         
         if (revealed.length === 0) {
-            Chat.addMessage('system', '💡 已经没有更多线索可挖了');
         }
         
         return revealed.length;
@@ -237,7 +228,6 @@ const Game = {
             if (!this.state.materialRevealed.includes(mat.id)) {
                 this.state.materialRevealed.push(mat.id);
             }
-            Chat.addMessage('system', `${toolLabel} ${mat.icon} ${mat.name}：${isFake ? '⚠️ 伪造' : '✅ 真实'}`);
         });
         
         return targets.length;
@@ -255,7 +245,6 @@ const Game = {
         UserData.updateStats({ randomEvents: UserData.getData().stats.randomEvents + 1 });
         UserData.recordSeen('seenEvents', event.id);
 
-        Chat.addMessage('system', `⚡ 随机事件发生：${event.title}`);
         SoundManager.play('event'); // 播放事件音效
         this.showScreen('randomEvent');
         RandomEvents.handle(event);
@@ -265,7 +254,6 @@ const Game = {
     goToFinalDecision() {
         if (Game.state.playerRole === 'applicant') {
             // 申请人模式：自动给出结果
-            Chat.addMessage('system', '问答环节结束！系统将根据你的表现自动评估结果...');
             setTimeout(() => {
                 const result = Decision.calculate('auto');
                 this.showScreen('resultScreen');
@@ -273,7 +261,6 @@ const Game = {
             }, 1500);
         } else {
             // 签证官模式：手动选择决策
-            Chat.addMessage('system', '问答环节结束！现在请做出你的最终决策');
             this.showScreen('finalDecision');
             Decision.renderSummary();
         }
@@ -333,7 +320,6 @@ const Game = {
         Shop.selectedItems = [];
         
         // 整页刷新已经换成 backToMain()，这些残留得自己清
-        Chat.reset();
         if (typeof ItemQuickUse !== 'undefined' && ItemQuickUse.hide) {
             ItemQuickUse.hide();
         }
@@ -422,7 +408,6 @@ const Game = {
     
     // 显示商店（从主页）
     showShop() {
-        Chat.addMessage('system', '商店功能已在道具购买阶段开放');
     },
     
     // 显示成就

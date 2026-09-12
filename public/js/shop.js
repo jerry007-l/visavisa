@@ -62,7 +62,6 @@ const Shop = {
         const buying = index === -1;
         
         if (buying && Game.state.coins < item.price) {
-            Chat.addMessage('system', '金币不足!');
             SoundManager.play('fail');
             return;
         }
@@ -92,7 +91,6 @@ const Shop = {
     // 贿赂逻辑
     selectBribe(bribeItem) {
         if (Game.state.coins < bribeItem.price) {
-            Chat.addMessage('system', '💰 金币不足,无法贿赂!');
             SoundManager.play('fail');
             return;
         }
@@ -112,19 +110,15 @@ const Shop = {
         Game.updateCoinDisplay();
         SoundManager.play('alert');
         
-        Chat.addMessage('system', `💰 你正在向签证官行贿 ${bribeItem.price} VC...`);
         
         setTimeout(() => {
             const won = Math.random() < 0.5;
             
             if (won) {
                 Game.state.score = 100;
-                Chat.addMessage('success', '🎉 贿赂成功!签证官收下了钱!');
                 SoundManager.play('success');
             } else {
                 Game.state.score = 0;
-                Chat.addMessage('error', '😱 贿赂败露!签证官立即拒绝你的申请!');
-                Chat.addMessage('system', '⚠️ 你已被列入重点关注名单!');
                 SoundManager.play('fail');
             }
             

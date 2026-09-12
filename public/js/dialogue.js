@@ -33,9 +33,7 @@ const Dialogue = {
         }
         
         if (Game.state.playerRole === 'officer') {
-            Chat.addMessage('system', '👔 你是签证官！听申请人的回答，判断他有没有说谎');
         } else {
-            Chat.addMessage('system', '🧳 你是申请人！选出最能骗过签证官的答案');
         }
         
         this.showNextQuestion();
@@ -70,7 +68,6 @@ const Dialogue = {
         while (Game.state.skipNextQuestion && this.questionIndex < this.questions.length) {
             Game.state.skipNextQuestion = false;
             const skipped = this.questions[this.questionIndex];
-            Chat.addMessage('system', `🧠 记忆魔法生效：签证官忘记了「${skipped.q.slice(0, 12)}…」这个问题`);
             this.questionIndex++;
         }
         
@@ -132,14 +129,12 @@ const Dialogue = {
             }
         }
         
-        Chat.addMessage('system', `问题 ${this.questionIndex + 1}：${this.currentQuestion.q}`);
         
         this.startRoundTimer();
         
         // 🎭 人格切换：本题自动选出最优答案
         if (!isOfficer && Game.state.autoAnswerRounds > 0) {
             Game.state.autoAnswerRounds--;
-            Chat.addMessage('system', '🎭 人格切换生效：本题自动选择最优答案');
             setTimeout(() => this.answer(this.currentQuestion.answer), 900);
         }
     },
@@ -228,13 +223,11 @@ const Dialogue = {
         
         if (correct) {
             Game.state.score += 5;
-            Chat.addMessage('system', isOfficer ? '✅ 判断正确！准确度+5' : '✅ 回答正确！信任度+5');
             SoundManager.play('success');
         } else {
             // 📜 法律免责声明：扣分打八折
             const penalty = Game.state.lenientScoring ? 8 : 10;
             Game.state.score -= penalty;
-            Chat.addMessage('system', `❌ ${isOfficer ? '判断失误' : '回答有问题'}！${isOfficer ? '准确度' : '信任度'}-${penalty}`);
             SoundManager.play('fail');
         }
         
@@ -287,7 +280,6 @@ const Dialogue = {
         if (Game.state.timeBonusRounds > 0 && Game.state.timeBonus > 0) {
             seconds += Game.state.timeBonus;
             Game.state.timeBonusRounds--;
-            Chat.addMessage('system', `☕ 咖啡因生效：本题答题时间 +${Game.state.timeBonus} 秒`);
         }
         
         const timerBar = document.getElementById('TimerBar');
@@ -312,7 +304,6 @@ const Dialogue = {
             if (seconds <= 0) {
                 clearInterval(this.timer);
                 this.timer = null;
-                Chat.addMessage('system', '⏰ 时间到！');
                 this.answer(-1);
             }
         }, 1000);
@@ -321,7 +312,6 @@ const Dialogue = {
     endDialogue() {
         clearInterval(this.timer);
         this.timer = null;
-        Chat.addMessage('system', '对话环节结束！即将进入最终决策');
         setTimeout(() => {
             Game.goToFinalDecision();
         }, 2000);

@@ -39,8 +39,7 @@ const Achievement = {
             { id: 'question-veteran', condition: data.seenQuestions.length >= 50 },
             { id: 'event-hunter', condition: data.seenEvents.length >= RANDOM_EVENTS.length },
             { id: 'item-collector', condition: data.purchasedItems.length >= 8 },
-            { id: 'replay-king', condition: Object.values(data.questionCounts).some(count => count >= 5) },
-            { id: 'chat-master', condition: (stats.chatMessages || 0) >= 100 }
+            { id: 'replay-king', condition: Object.values(data.questionCounts).some(count => count >= 5) }
         ];
 
         let unlocked = 0;
@@ -48,7 +47,7 @@ const Achievement = {
             if (condition && !UserData.hasAchievement(id)) {
                 if (UserData.addAchievement(id)) {
                     this.justUnlocked.push(id);
-                    this.unlockNotification(id);
+                    SoundManager.play('success');
                     unlocked++;
                 }
             }
@@ -84,13 +83,6 @@ const Achievement = {
                 </div>
             </div>
         `;
-    },
-
-    unlockNotification(id) {
-        const achievement = ACHIEVEMENTS.find(a => a.id === id);
-        if (!achievement) return;
-        Chat.addMessage('system', `🏆 成就解锁：${achievement.name} - ${achievement.desc}`);
-        SoundManager.play('success');
     },
 
     showList() {

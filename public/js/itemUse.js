@@ -41,11 +41,9 @@ const ItemUse = {
         if (index > -1) {
             // 取消使用
             this.usedItems.splice(index, 1);
-            Chat.addMessage('system', `已取消使用 ${this.getItemName(itemId)}`);
         } else {
             // 标记为使用
             this.usedItems.push(itemId);
-            Chat.addMessage('system', `标记使用 ${this.getItemName(itemId)}`);
         }
         
         // 重新渲染
@@ -62,11 +60,9 @@ const ItemUse = {
     // 应用使用道具的效果
     applyUsedEffects() {
         if (this.usedItems.length === 0) {
-            Chat.addMessage('system', '没有道具被使用');
             return;
         }
         
-        Chat.addMessage('system', `使用了 ${this.usedItems.length} 个道具！效果将在游戏中生效`);
         
         // TODO: 根据道具ID应用不同的效果到游戏状态
         // 这里先记录已使用的道具，在后续环节中检查

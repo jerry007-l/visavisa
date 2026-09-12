@@ -57,6 +57,9 @@ function makeEl(id) {
         innerHTML: '', textContent: '', value: '', className: '',
         style: {}, classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
         appendChild() {}, addEventListener() {}, removeEventListener() {},
+        insertAdjacentHTML(pos, html) {
+            this.innerHTML = pos === 'beforeend' ? this.innerHTML + html : html + this.innerHTML;
+        },
         querySelectorAll: () => [], querySelector: () => null,
         focus() {}, scrollIntoView() {}, setAttribute() {}, getAttribute: () => null,
         disabled: false, onclick: null
@@ -141,13 +144,12 @@ ${bundle}
         'ItemQuickUse.use', 'ItemQuickUse.applyEffect',
         'RandomEvents.handle', 'RandomEvents.choose', 'RandomEvents.leave',
         'UserData.recordSeen', 'UserData.countQuestion', 'UserData.updateCoins',
-        'IdentityPool.getRandom', 'IdentityPool.getByGuilt',
-        'Chat.addMessage', 'Chat.send', 'Chat.reset'
+        'IdentityPool.getRandom', 'IdentityPool.getByGuilt'
     ];
     // eval 里的顶层 const 不会挂到 globalThis，必须用同作用域的字面量取
     const modules = {
         Game, Dialogue, Decision, Result, Shop, ItemQuickUse, MaterialReview,
-        DrawMaterials, RandomEvents, Achievement, UserData, IdentityPool, Chat, SoundManager
+        DrawMaterials, RandomEvents, Achievement, UserData, IdentityPool, SoundManager
     };
     required.forEach(n => {
         const [obj, method] = n.split('.');
@@ -262,10 +264,9 @@ ${bundle}
     ok('申请人全错 -> score=' + badScore + ' success=' + badResult.success);
 
     // ===== 选项顺序打乱：不能靠"永远点第一个"蒙对 =====
-    // showNextQuestion 会启动计时器并写聊天记录，先固定道具开关，结束后还原现场
+    // showNextQuestion 会启动计时器，先固定道具开关，结束后还原现场
     const scoreBeforeShuffle = Game.state.score;
     const histBeforeShuffle = Game.state.dialogueHistory.length;
-    const chatBeforeShuffle = Chat.messages.length;
     Game.state.playerRole = 'applicant';
     Game.state.skipNextQuestion = false;
     Game.state.autoAnswerRounds = 0;
@@ -319,7 +320,6 @@ ${bundle}
     Dialogue.timer = null;
     Game.state.score = scoreBeforeShuffle;
     Game.state.dialogueHistory.length = histBeforeShuffle;
-    Chat.messages.length = chatBeforeShuffle;
 
     // ===== 金币真实落库 =====
     tick(100000);
@@ -608,19 +608,12 @@ ${bundle}
     tick(2000);
     Game.drawMaterials();
     tick(3000);
-    Chat.addMessage('system', '上一局的残留消息');
-    document.getElementById('ChatMessages').innerHTML = '<div>上一局的残留 DOM</div>';
-    if (Chat.messages.length === 0) fail('测试前置条件不成立：Chat.messages 没被写入');
 
     const coinsBeforeBack = 321;
     Game.state.coins = coinsBeforeBack;
     Game.backToMain();
     if (Game.state.screen !== 'mainMenu') fail('backToMain 后没有回到主菜单，实际=' + Game.state.screen);
     else ok('backToMain 回到主菜单');
-    if (Chat.messages.length !== 0) fail('上一局聊天记录还留在 Chat.messages 里（' + Chat.messages.length + ' 条）');
-    else ok('上一局聊天记录已从 Chat.messages 清空');
-    if (document.getElementById('ChatMessages').innerHTML !== '') fail('聊天区 DOM 还留着上一局的消息');
-    else ok('聊天区 DOM 已清空');
     if (Game.state.playerRole !== null) fail('playerRole 没被重置: ' + Game.state.playerRole);
     if (Game.state.dialogueHistory.length !== 0) fail('dialogueHistory 没被清空');
     if (Game.state.drawnMaterials.length !== 0) fail('drawnMaterials 没被清空');

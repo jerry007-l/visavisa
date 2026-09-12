@@ -461,6 +461,15 @@ h2 {
     min-height: 100px;
 }
 
+.event-outcome {
+    margin-top: 12px;
+    padding: 10px;
+    background: #F8F9FA;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #3C3B6E;
+}
+
 .event-choices {
     display: flex;
     flex-direction: column;

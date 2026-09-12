@@ -10,7 +10,6 @@ const ACHIEVEMENTS = [
     { id: 'applicant-legend', name: '🌟 申请人传奇', desc: '连续5次作为申请人通过', icon: '✨' },
     { id: 'officer-legend', name: '⚡ 签证官传奇', desc: '签证官连续5次判断正确', icon: '⚡' },
     { id: 'item-collector', name: '🛒 道具收藏家', desc: '累计购买过8种不同道具', icon: '🛍️' },
-    { id: 'chat-master', name: '💬 聊天大师', desc: '发送100条聊天消息', icon: '🗣️' },
     { id: 'rich-list', name: '👑 富豪榜', desc: '累计金币达到1000', icon: '🤑' },
     { id: 'replay-king', name: '🔄 复读王', desc: '同一道题答了5次', icon: '🔁' },
     { id: 'question-veteran', name: '❓ 题库老兵', desc: '答过50道不同的题', icon: '📚' },

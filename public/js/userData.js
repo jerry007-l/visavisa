@@ -74,8 +74,7 @@ const UserData = {
                 fraudstersCaught: 0,
                 randomEvents: 0,
                 officerStreak: 0,
-                applicantStreak: 0,
-                chatMessages: 0
+                applicantStreak: 0
             },
             settings: {
                 soundEnabled: true,

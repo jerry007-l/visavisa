@@ -90,7 +90,6 @@ const MaterialReview = {
         
         statusEl.innerHTML = `🔍 ${impression}`;
         statusEl.style.color = suspicious ? '#E67E22' : '#7F8C8D';
-        Chat.addMessage('system', `🔍 肉眼初检 ${material.icon} ${material.name}：${impression}（想确认请用查验道具）`);
         SoundManager.play('click');
     }
 };

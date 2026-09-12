@@ -1,5 +1,5 @@
 // Service Worker - 离线缓存
-const CACHE_NAME = 'visa-game-v6';
+const CACHE_NAME = 'visa-game-v7';
 const ASSETS = [
     '/',
     '/index.html',
@@ -7,7 +7,6 @@ const ASSETS = [
     '/css/game.css',
     '/css/shop.css',
     '/css/itemQuickUse.css',
-    '/css/chat.css',
     '/css/result.css',
     '/js/userData.js',
     '/js/questionBank.js',
@@ -27,7 +26,6 @@ const ASSETS = [
     '/js/dialogue.js',
     '/js/decision.js',
     '/js/result.js',
-    '/js/chat.js',
     '/js/randomEventHandle.js',
     '/js/achievement.js',
     '/js/selfCheck.js',

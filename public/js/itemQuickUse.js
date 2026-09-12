@@ -9,7 +9,6 @@ const ItemQuickUse = {
         const availableItems = purchasedItems.filter(item => !usedIds.includes(item.id));
         
         if (availableItems.length === 0) {
-            Chat.addMessage('system', '没有可用的道具了！');
             return;
         }
         
@@ -60,7 +59,6 @@ const ItemQuickUse = {
         // 检查是否已使用
         const usedIds = Game.state.usedItemIds || [];
         if (usedIds.includes(itemId)) {
-            Chat.addMessage('system', `${item.name} 已经使用过了！`);
             return;
         }
         
@@ -77,7 +75,6 @@ const ItemQuickUse = {
         // 关闭面板
         this.hide();
         
-        Chat.addMessage('system', `✅ 使用了 ${item.name}！`);
     },
     
     // 道具效果分组
@@ -98,10 +95,8 @@ const ItemQuickUse = {
                 if (forged.length > 0) {
                     const target = forged[0];
                     state.materialFake[target.id] = false;
-                    Chat.addMessage('system', `📱 深度P图：${target.icon} ${target.name} 已重新制作，查不出破绽了`);
                 } else {
                     state.score = Math.min(100, state.score + 5);
-                    Chat.addMessage('system', '📱 深度P图：你的材料本来就没问题，精修后更显专业，信任度+5');
                 }
                 this.showFeedback('success', '📱 深度P图已生效！');
                 this.playVisualEffect('glow-green');
@@ -111,9 +106,6 @@ const ItemQuickUse = {
             case 'returnee_template': {
                 const fixed = this.EDUCATION_WORK_IDS.filter(id => state.materialFake[id]);
                 fixed.forEach(id => { state.materialFake[id] = false; });
-                Chat.addMessage('system', fixed.length > 0
-                    ? `💼 海归模板：${fixed.length} 份学历/工作材料已替换为真实版本`
-                    : '💼 海归模板：已套用到你的学历与工作经历上，材料无懈可击');
                 state.score = Math.min(100, state.score + 5);
                 this.showFeedback('success', '💼 海归模板已生效！');
                 this.playVisualEffect('glow-green');
@@ -123,9 +115,6 @@ const ItemQuickUse = {
             case 'fake_operator': {
                 const fixed = this.INVITATION_IDS.filter(id => state.materialFake[id]);
                 fixed.forEach(id => { state.materialFake[id] = false; });
-                Chat.addMessage('system', fixed.length > 0
-                    ? `📞 假接线员：${fixed.length} 份邀请类材料已通过核查`
-                    : '📞 假接线员：已安排待命，任何核实电话都会被圆满应付过去');
                 state.score = Math.min(100, state.score + 5);
                 this.showFeedback('success', '📞 假接线员已就位！');
                 this.playVisualEffect('glow-green');
@@ -134,21 +123,18 @@ const ItemQuickUse = {
             
             case 'crazy_itinerary':
                 state.score = Math.min(100, state.score + 8);
-                Chat.addMessage('system', '🗓️ 霸王行程：行程表做得夸张但滴水不漏，签证官挑不出毛病，信任度+8');
                 this.showFeedback('success', '🗓️ 行程可信度提升！');
                 this.playVisualEffect('glow-gold');
                 break;
             
             case 'magic_memory':
                 state.skipNextQuestion = true;
-                Chat.addMessage('system', '🧠 记忆魔法：下一个问题会从签证官的脑子里消失');
                 this.showFeedback('success', '🧠 下一题将被跳过！');
                 this.playVisualEffect('glow-blue');
                 break;
             
             case 'personality_switch':
                 state.autoAnswerRounds = 2;
-                Chat.addMessage('system', '🎭 人格切换：接下来 2 轮会自动给出最优答案');
                 this.showFeedback('success', '🎭 接下来两轮自动答对！');
                 this.playVisualEffect('glow-blue');
                 break;
@@ -156,14 +142,12 @@ const ItemQuickUse = {
             case 'triple_caffeine':
                 state.timeBonus = 10;
                 state.timeBonusRounds = 2;
-                Chat.addMessage('system', '☕ 三倍咖啡因：接下来 2 轮答题时间各 +10 秒');
                 this.showFeedback('success', '☕ 答题时间延长！');
                 this.playVisualEffect('pulse-orange');
                 break;
             
             case 'legal_disclaimer':
                 state.lenientScoring = true;
-                Chat.addMessage('system', '📜 法律免责声明：本局所有信任度扣分打八折');
                 this.showFeedback('success', '📜 扣分减免已生效！');
                 this.playVisualEffect('glow-gold');
                 break;
@@ -172,7 +156,6 @@ const ItemQuickUse = {
             case 'microscope': {
                 const found = Game.revealMaterialTruth(null, '🔍 显微镜审查：');
                 Game.revealClue(1);
-                Chat.addMessage('system', `🔍 显微镜审查完成，共发现 ${found} 处材料疑点并挖出 1 条线索`);
                 this.showFeedback('success', '🔍 发现可疑点！');
                 this.playVisualEffect('glow-green');
                 break;
@@ -180,7 +163,6 @@ const ItemQuickUse = {
             
             case 'dna_compare':
                 Game.revealMaterialTruth(null, '🧬 DNA比对：');
-                Chat.addMessage('system', '🧬 DNA比对：所有在案材料的真伪已 100% 确认');
                 this.showFeedback('success', '🧬 材料真伪已确认！');
                 this.playVisualEffect('glow-green');
                 break;
@@ -188,10 +170,8 @@ const ItemQuickUse = {
             case 'verify_hotline': {
                 const found = Game.revealMaterialTruth(this.INVITATION_IDS, '📞 核实热线：');
                 if (found === 0) {
-                    Chat.addMessage('system', '📞 核实热线：本案没有邀请类材料，改为核查申请人背景');
                     Game.revealClue(1);
                 } else {
-                    Chat.addMessage('system', '📞 核实热线：邀请方已确认，通话记录在案');
                 }
                 this.showFeedback('success', '📞 核实完成！');
                 this.playVisualEffect('glow-blue');
@@ -200,7 +180,6 @@ const ItemQuickUse = {
             
             case 'review_monitor':
                 Game.revealClue(1);
-                Chat.addMessage('system', '🎬 回放监控：从申请人入场画面里发现了异常');
                 this.showFeedback('success', '🎬 监控回放完成！');
                 this.playVisualEffect('glow-blue');
                 break;
@@ -208,7 +187,6 @@ const ItemQuickUse = {
             case 'chain_question':
                 state.pressureMode = true;
                 Game.revealClue(2);
-                Chat.addMessage('system', '⚡ 连环追问：持续施压已开启，申请人之后更容易说漏嘴');
                 this.showFeedback('success', '⚡ 压力测试已启动！');
                 this.playVisualEffect('pulse-orange');
                 break;
@@ -217,9 +195,6 @@ const ItemQuickUse = {
                 const identity = state.applicantIdentity;
                 // 黑名单只能查到有正经案底的人；那些动机荒唐的低危身份查不出来
                 const hasRecord = !!identity && identity.guilty && identity.difficulty >= 2;
-                Chat.addMessage('system', hasRecord
-                    ? `🕵️ 黑名单扫描：⚠️ 命中记录！该申请人在系统内留有不良记录`
-                    : '🕵️ 黑名单扫描：未命中任何不良记录（不代表申请目的真实）');
                 this.showFeedback(hasRecord ? 'error' : 'info', hasRecord ? '🕵️ 命中黑名单！' : '🕵️ 无不良记录');
                 this.playVisualEffect(hasRecord ? 'pulse-orange' : 'glow-blue');
                 break;
@@ -235,7 +210,6 @@ const ItemQuickUse = {
                         rating = identity.difficulty >= 2 ? '中' : '低';
                     }
                 }
-                Chat.addMessage('system', `📈 信用评分：综合风险评级为「${rating}」`);
                 this.showFeedback('info', `📈 风险评级：${rating}`);
                 this.playVisualEffect('glow-gold');
                 break;
@@ -243,13 +217,11 @@ const ItemQuickUse = {
             
             case 'ai_emotion':
                 state.suspicionRadar = true;
-                Chat.addMessage('system', '📊 AI情绪分析：已开启，之后每轮会给出申请人可疑度读数（读数并非绝对可靠）');
                 this.showFeedback('success', '📊 情绪分析已开启！');
                 this.playVisualEffect('glow-blue');
                 break;
             
             default:
-                Chat.addMessage('system', `【${item.name}】已使用！${item.effect}`);
                 this.showFeedback('info', `${item.name} 已激活`);
         }
         
