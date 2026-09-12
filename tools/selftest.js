@@ -51,11 +51,25 @@ globalThis.clearInterval = vClear;
 const failures = [];
 
 // ---------- 最小 DOM / 浏览器桩 ----------
+function makeClassList() {
+    const set = new Set();
+    return {
+        add: (c) => set.add(c),
+        remove: (c) => set.delete(c),
+        toggle(c, force) {
+            const on = force === undefined ? !set.has(c) : !!force;
+            if (on) set.add(c); else set.delete(c);
+            return on;
+        },
+        contains: (c) => set.has(c)
+    };
+}
+
 function makeEl(id) {
     return {
         id,
         innerHTML: '', textContent: '', value: '', className: '',
-        style: {}, classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+        style: {}, classList: makeClassList(),
         appendChild() {}, addEventListener() {}, removeEventListener() {},
         insertAdjacentHTML(pos, html) {
             this.innerHTML = pos === 'beforeend' ? this.innerHTML + html : html + this.innerHTML;
@@ -390,6 +404,7 @@ ${bundle}
     let definitive = 0;
     let suspicious = 0;
     for (let i = 0; i < 80; i++) {
+        Game.state.materialImpressions = {}; // 印象已改为缓存，统计分布时每次现 roll
         MaterialReview.inspect(MATERIAL_POOL[0].id);
         const html = document.getElementById('status-' + MATERIAL_POOL[0].id).innerHTML;
         if (html.includes('已确认')) definitive++;
@@ -404,6 +419,32 @@ ${bundle}
     MaterialReview.inspect(MATERIAL_POOL[0].id);
     if (!document.getElementById('status-' + MATERIAL_POOL[0].id).innerHTML.includes('伪造')) fail('道具验过的材料仍不给确定结论');
     else ok('道具验过的材料给出确定结论');
+
+    // ===== 同一份材料的审核结论不能变卦 =====
+    withState('officer', () => { Game.state.materialRevealed = []; });
+    const statusElOf = (id) => document.getElementById('status-' + id);
+    MaterialReview.inspect(MATERIAL_POOL[0].id);
+    const firstHtml = statusElOf(MATERIAL_POOL[0].id).innerHTML;
+    const firstColor = statusElOf(MATERIAL_POOL[0].id).style.color;
+    let unstable = 0;
+    for (let i = 0; i < 20; i++) {
+        MaterialReview.inspect(MATERIAL_POOL[0].id);
+        const el = statusElOf(MATERIAL_POOL[0].id);
+        if (el.innerHTML !== firstHtml || el.style.color !== firstColor) unstable++;
+    }
+    if (unstable > 0) fail('同一份材料反复初检有 ' + unstable + '/20 次结论变卦（旧行为每次点击都重 roll）');
+    else ok('同一份材料反复初检 20 次结论与颜色完全一致');
+
+    // 重渲染本环节（如返回审核界面）后，已看过的印象要保留，不能重置成占位文案
+    MaterialReview.renderMaterials();
+    if (statusElOf(MATERIAL_POOL[0].id).innerHTML !== firstHtml) fail('重渲染材料审核后已看过的印象丢失，实际: ' + statusElOf(MATERIAL_POOL[0].id).innerHTML);
+    else ok('重渲染材料审核后保留已看过的印象');
+
+    // 道具揭示真伪后必须压过缓存的印象，改给确定结论
+    Game.state.materialRevealed = [MATERIAL_POOL[0].id];
+    MaterialReview.inspect(MATERIAL_POOL[0].id);
+    if (!statusElOf(MATERIAL_POOL[0].id).innerHTML.includes('已确认')) fail('道具揭示后仍显示缓存的模糊印象，确定结论被印象盖住');
+    else ok('道具揭示真伪后覆盖缓存印象、改给确定结论');
 
     // ===== 线索系统 =====
     tick(100000);
@@ -608,6 +649,8 @@ ${bundle}
     tick(2000);
     Game.drawMaterials();
     tick(3000);
+    // 先留下一份初检印象，验证回主菜单开新局时不会沿用
+    if (Game.state.drawnMaterials.length) MaterialReview.inspect(Game.state.drawnMaterials[0].id);
 
     const coinsBeforeBack = 321;
     Game.state.coins = coinsBeforeBack;
@@ -619,6 +662,8 @@ ${bundle}
     if (Game.state.drawnMaterials.length !== 0) fail('drawnMaterials 没被清空');
     if (Game.state.usedItemIds.length !== 0) fail('usedItemIds 没被清空');
     if (Game.state.materialRevealed.length !== 0) fail('materialRevealed 没被清空');
+    if (Object.keys(Game.state.materialImpressions).length !== 0) fail('materialImpressions 没被清空，新一局会沿用上一局的初检印象');
+    else ok('materialImpressions 已随 resetGame 清空');
     if (Game.state.revealedClues.length !== 0) fail('revealedClues 没被清空');
     if (Game.state.score !== 70) fail('score 没回到初始 70，实际=' + Game.state.score);
     if (Game.state.currentRound !== 1) fail('currentRound 没回到 1');
@@ -669,6 +714,64 @@ ${bundle}
         if (SoundManager.isPlaying !== true) fail('enableAndPlay 没有触发播放（stub 无 play 方法应直接置 isPlaying=true）');
         else ok('enableAndPlay 触发播放 isPlaying=true');
     }
+
+    // "音效"按钮的核心修复：按真实发声状态决定开关方向，而不是照搬存档里的开关。
+    // 刚进入页面时 play() 常被自动播放策略拦截——存档是"开"、实际无声，
+    // 旧行为会把它切成"关"，用户听不到也看不到任何变化，表现为"点了没反应"。
+    if (typeof AudioInit.toggleSound !== 'function') fail('AudioInit.toggleSound 不是函数');
+    else {
+        const btn = document.getElementById('soundToggleBtn');
+
+        // 场景一：存档为开、实际无声（自动播放被拦截）→ 点击必须开启出声，且不能把存档翻成静音
+        SoundManager.bgmEnabled = true;
+        SoundManager.sfxEnabled = true;
+        SoundManager.isPlaying = false;
+        SoundManager.bgmLoading = false;
+        SoundManager.bgmAudio = null;
+        UserData.updateSettings({ soundEnabled: true, bgmEnabled: true });
+        AudioInit.toggleSound();
+        if (SoundManager.isPlaying !== true) fail('无声状态下点击音效没有开启播放（旧行为会误判为关闭）');
+        else ok('无声状态点击音效 -> 开启并播放（不再误切成关闭）');
+        const s1 = UserData.getSettings();
+        if (s1.soundEnabled !== true || s1.bgmEnabled !== true) fail('无声状态下点击音效反而把存档改成了静音');
+        else ok('无声状态点击音效不会把存档翻成静音');
+
+        // 场景二：正在播放 → 点击才关闭
+        AudioInit.toggleSound();
+        if (SoundManager.isPlaying !== false) fail('播放中点击音效没有关闭');
+        else ok('播放中点击音效 -> 关闭');
+        const s2 = UserData.getSettings();
+        if (s2.soundEnabled !== false || s2.bgmEnabled !== false) fail('播放中点击音效没有把关闭状态持久化到存档');
+        else ok('播放中点击音效持久化 soundEnabled/bgmEnabled=false');
+
+        // 按钮外观必须跟着真实发声状态走，否则点击依旧"看不出反应"
+        SoundManager.isPlaying = true;
+        AudioInit.syncSoundButton();
+        if (btn.textContent !== '🔊 音效') fail('播放中按钮标签未同步为 🔊 音效，实际: ' + btn.textContent);
+        else ok('播放中按钮标签同步为 🔊 音效');
+        if (btn.classList.contains('sound-off')) fail('播放中按钮不应带 sound-off 关闭态类');
+        else ok('播放中按钮移除 sound-off');
+
+        SoundManager.isPlaying = false;
+        AudioInit.syncSoundButton();
+        if (btn.textContent !== '🔇 音效') fail('无声时按钮标签未同步为 🔇 音效，实际: ' + btn.textContent);
+        else ok('无声时按钮标签同步为 🔇 音效');
+        if (!btn.classList.contains('sound-off')) fail('无声时按钮未加 sound-off 关闭态类');
+        else ok('无声时按钮加上 sound-off');
+
+        // 点击后要立刻反馈，不能等 play() 异步 resolve（stub 里 isPlaying 仍为 false）
+        SoundManager.bgmEnabled = false;
+        SoundManager.sfxEnabled = false;
+        SoundManager.isPlaying = false;
+        SoundManager.bgmAudio = null;
+        AudioInit.paintSoundButton(true);
+        if (btn.textContent !== '🔊 音效') fail('paintSoundButton(true) 未立刻写入开启态标签');
+        else ok('点击瞬间即乐观绘制开启态标签，无需等待 play() resolve');
+    }
+
+    // 音效按钮不应再依赖正文底部才加载的 Game，否则刚进入页面时可能尚未就绪
+    if (typeof Game.toggleSound !== 'undefined') fail('Game.toggleSound 应已移除（按钮改接 head 中的 AudioInit）');
+    else ok('Game.toggleSound 已移除，音效按钮不再依赖底部 main.js');
 
     console.log('\\n===== 无头跑测结果 =====');
     log.forEach(l => console.log(' ' + l));

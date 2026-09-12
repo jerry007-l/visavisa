@@ -120,6 +120,28 @@ body {
     box-shadow: 0 5px 15px rgba(178, 34, 52, 0.2);
 }
 
+/* "音效"按钮：继承自 .btn-secondary 的 0.3s 全属性过渡让点击反馈显得迟钝，
+   这里收窄为 0.08s 的形变过渡并加按压态，使点击立刻可见 */
+#soundToggleBtn {
+    transition: transform 0.08s ease, background 0.3s ease,
+                box-shadow 0.3s ease, opacity 0.2s ease, border-color 0.2s ease;
+}
+
+#soundToggleBtn:active {
+    transform: scale(0.94);
+    box-shadow: none;
+}
+
+/* 关闭态：与右侧引导提示的虚线边框呼应，避免"没在出声却看起来是开启的" */
+#soundToggleBtn.sound-off {
+    opacity: 0.62;
+    border-style: dashed;
+}
+
+#soundToggleBtn.sound-off:hover {
+    opacity: 0.85;
+}
+
 .btn-back {
     background: transparent;
     color: #7F8C8D;

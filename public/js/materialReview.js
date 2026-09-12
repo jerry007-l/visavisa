@@ -30,16 +30,22 @@ const MaterialReview = {
         
         const isOfficer = Game.state.playerRole === 'officer';
         
-        container.innerHTML = materials.map(mat => `
+        container.innerHTML = materials.map(mat => {
+            // 重渲染（如返回本环节）时恢复已看过的印象，不能重置成占位文案逼人重 roll
+            const cached = Game.state.materialImpressions[mat.id];
+            const statusHtml = cached
+                ? cached.html
+                : (isOfficer ? '🔍 点击做肉眼初检' : '📄 点击查看这份材料的底细');
+            const statusStyle = cached ? ` style="color: ${cached.color}"` : '';
+            return `
             <div class="material-card" onclick="MaterialReview.inspect('${mat.id}')">
                 <div class="material-icon">${mat.icon}</div>
                 <h3>${mat.name}</h3>
                 <p>${mat.desc}</p>
-                <div class="material-status" id="status-${mat.id}">
-                    ${isOfficer ? '🔍 点击做肉眼初检' : '📄 点击查看这份材料的底细'}
-                </div>
+                <div class="material-status" id="status-${mat.id}"${statusStyle}>${statusHtml}</div>
             </div>
-        `).join('');
+        `;
+        }).join('');
         
         if (isOfficer) {
             const officerTools = document.getElementById('OfficerTools');
@@ -55,6 +61,46 @@ const MaterialReview = {
         }
     },
     
+    // 产出一份材料的审核状态 { html, color }。
+    // 申请人的真伪底细、签证官用道具确认过的结论都是确定性的，且可能中途变化
+    // （道具能把假材料洗成真、也会揭示真伪），故每次现算、不进缓存；
+    // 只有签证官的肉眼初检印象是随机的，只 roll 一次并缓存，保证反复查看不变卦
+    statusFor(material) {
+        const id = material.id;
+        const isFake = !!Game.state.materialFake[id];
+        
+        // 申请人自己清楚材料是真是假
+        if (Game.state.playerRole !== 'officer') {
+            return {
+                html: isFake ? '⚠️ 这份是伪造的（只有你知道）' : '✅ 这份是真的，可以放心提交',
+                color: isFake ? '#E67E22' : '#27AE60'
+            };
+        }
+        
+        // 签证官：已经用道具验过的材料直接给结论
+        if (Game.state.materialRevealed.includes(id)) {
+            return {
+                html: isFake ? '⚠️ 已确认伪造' : '✅ 已确认真实',
+                color: isFake ? '#E74C3C' : '#27AE60'
+            };
+        }
+        
+        // 签证官：肉眼初检只给模糊印象，roll 一次后缓存
+        let cached = Game.state.materialImpressions[id];
+        if (!cached) {
+            const suspiciousChance = isFake ? 0.7 : 0.2;
+            const suspicious = Math.random() < suspiciousChance;
+            const pool = suspicious ? this.FAKE_IMPRESSIONS : this.NEUTRAL_IMPRESSIONS;
+            const impression = pool[Math.floor(Math.random() * pool.length)];
+            cached = {
+                html: `🔍 ${impression}`,
+                color: suspicious ? '#E67E22' : '#7F8C8D'
+            };
+            Game.state.materialImpressions[id] = cached;
+        }
+        return cached;
+    },
+    
     inspect(materialId) {
         const material = Game.state.drawnMaterials.find(m => m.id === materialId);
         const statusEl = document.getElementById(`status-${materialId}`);
@@ -64,32 +110,9 @@ const MaterialReview = {
             return;
         }
         
-        const isFake = !!Game.state.materialFake[materialId];
-        
-        // 申请人自己清楚材料是真是假
-        if (Game.state.playerRole !== 'officer') {
-            statusEl.innerHTML = isFake
-                ? '⚠️ 这份是伪造的（只有你知道）'
-                : '✅ 这份是真的，可以放心提交';
-            statusEl.style.color = isFake ? '#E67E22' : '#27AE60';
-            return;
-        }
-        
-        // 签证官：已经用道具验过的材料直接给结论
-        if (Game.state.materialRevealed.includes(materialId)) {
-            statusEl.innerHTML = isFake ? '⚠️ 已确认伪造' : '✅ 已确认真实';
-            statusEl.style.color = isFake ? '#E74C3C' : '#27AE60';
-            return;
-        }
-        
-        // 签证官：肉眼初检只给模糊印象
-        const suspiciousChance = isFake ? 0.7 : 0.2;
-        const suspicious = Math.random() < suspiciousChance;
-        const pool = suspicious ? this.FAKE_IMPRESSIONS : this.NEUTRAL_IMPRESSIONS;
-        const impression = pool[Math.floor(Math.random() * pool.length)];
-        
-        statusEl.innerHTML = `🔍 ${impression}`;
-        statusEl.style.color = suspicious ? '#E67E22' : '#7F8C8D';
+        const status = this.statusFor(material);
+        statusEl.innerHTML = status.html;
+        statusEl.style.color = status.color;
         SoundManager.play('click');
     }
 };

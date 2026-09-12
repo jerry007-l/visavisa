@@ -30,7 +30,8 @@ const Game = {
 
         // 线索系统
         revealedClues: [],
-        materialRevealed: []       // 已被道具验出真伪的材料 id
+        materialRevealed: [],      // 已被道具验出真伪的材料 id
+        materialImpressions: {}    // 肉眼初检印象缓存：每份材料只 roll 一次，反复查看不变卦
     },
     
     // 初始化
@@ -315,7 +316,8 @@ const Game = {
             suspicionRadar: false,
             pressureMode: false,
             revealedClues: [],
-            materialRevealed: []
+            materialRevealed: [],
+            materialImpressions: {}
         });
         
         this.clearTimer();
@@ -423,11 +425,6 @@ const Game = {
     showStats() {
         const data = UserData.getData();
         alert(`📊 数据统计\n\n游戏次数: ${data.stats.gamesPlayed}\n胜利: ${data.stats.wins}\n失败: ${data.stats.losses}\n胜率: ${data.stats.gamesPlayed > 0 ? ((data.stats.wins/data.stats.gamesPlayed)*100).toFixed(1) : 0}%\n\n当前金币: ${data.coins} VC`);
-    },
-    
-    // 切换音效
-    toggleSound() {
-        SoundManager.toggle();
     }
 };
 

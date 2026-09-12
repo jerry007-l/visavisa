@@ -59,7 +59,10 @@
                 <button class="btn-secondary" onclick="Game.showAchievements()">成就系统</button>
                 <button class="btn-secondary" onclick="Game.showStats()">数据统计</button>
                 <div class="menu-sound-row">
-                    <button class="btn-secondary" onclick="Game.toggleSound()">🔊 音效</button>
+                    <!-- 音效开关直接接 <head> 里的 AudioInit（audioInit.js 在正文之前加载），
+                         不经底部才加载的 main.js，避免刚进入页面时 Game 尚未就绪。
+                         开关方向按真实发声状态判定、标签随 playing/pause 事件同步，详见 audioInit.js -->
+                    <button id="soundToggleBtn" class="btn-secondary sound-off" aria-pressed="false" onclick="AudioInit.toggleSound()">🔇 音效</button>
                     <!-- 音乐引导提示：浏览器禁止无交互自动播放，引导用户开启背景音乐。
                          点击提示本身即解除静音并播放（SoundManager.enableAndPlay）；
                          提示仅在音乐真正响起时隐藏、停止时重现，由 audioInit.js 监听 playing/pause 驱动 -->
