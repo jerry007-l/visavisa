@@ -114,10 +114,10 @@ const Dialogue = {
             if (isOfficer) {
                 optionsArea.innerHTML = `
                     <button class="btn-option" onclick="Dialogue.answer(0)" style="background: #27AE60; color: white;">
-                        ✅ 认可 - 他说的是实话
+                        ✅ 认可
                     </button>
                     <button class="btn-option" onclick="Dialogue.answer(1)" style="background: #E74C3C; color: white;">
-                        ❌ 不认可 - 他在说谎
+                        ❌ 不认可
                     </button>
                 `;
             } else {
