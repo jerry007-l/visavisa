@@ -3,7 +3,7 @@ const UserData = {
     key: 'visaGame',
     // 存档结构版本。题干文本是 seenQuestions / questionCounts 的键，改动或删除题目
     // 会让老记录对不上，所以每次改题干就把它 +1，读取时清掉这两项重建。
-    version: 2,
+    version: 3,
     
     getData() {
         try {
