@@ -5,7 +5,12 @@ const SoundManager = {
     volume: 0.5,
     audioContext: null,
     isPlaying: false,
+    bgmLoading: false,
     currentOscillators: [],
+    bgmAudio: null,
+    // 相对路径而非 /assets/...：应用其余资源（图标/CSS/JS）与 SW 注册都用相对路径，
+    // 根相对路径在 file:// 或子目录部署下会指向域名根导致 404、音乐无法加载
+    bgmSrc: 'assets/bgm.mp3',
     
     // 获取或创建 AudioContext
     getContext() {
@@ -32,73 +37,55 @@ const SoundManager = {
     
     // ==================== 背景音乐 ====================
     
-    // 开始简单的背景音乐
-    startBGM() {
-        if (!this.bgmEnabled || this.isPlaying) return;
-        
-        this.isPlaying = true;
-        console.log('🎵 背景音乐开始播放');
-        
-        this.playMelodyLoop();
+    // 懒创建承载背景音乐的 <audio> 元素：用真实音频文件替代原先的振荡器旋律，
+    // loop=true 让钢琴曲循环播放
+    ensureBgmAudio() {
+        if (!this.bgmAudio) {
+            const audio = document.createElement('audio');
+            audio.src = this.bgmSrc;
+            audio.loop = true;
+            audio.preload = 'auto';
+            this.bgmAudio = audio;
+        }
+        return this.bgmAudio;
     },
     
-    // 循环播放旋律（温馨风格）
-    playMelodyLoop() {
-        if (!this.isPlaying || !this.bgmEnabled) {
-            this.isPlaying = false;
+    // 开始背景音乐
+    startBGM() {
+        if (!this.bgmEnabled || this.isPlaying || this.bgmLoading) return;
+        
+        const audio = this.ensureBgmAudio();
+        audio.volume = this.volume;
+        
+        // 无头测试环境里的桩元素没有 play 方法，直接视为已在播放
+        if (typeof audio.play !== 'function') {
+            this.isPlaying = true;
             return;
         }
         
-        const ctx = this.getContext();
-        const notes = [
-            { freq: 261.63, dur: 0.5 },  // C4 (Middle C)
-            { freq: 329.63, dur: 0.5 },  // E4
-            { freq: 392.00, dur: 0.5 },  // G4
-            { freq: 523.25, dur: 0.5 },  // C5
-            { freq: 392.00, dur: 0.5 },  // G4
-            { freq: 329.63, dur: 0.5 },  // E4
-            { freq: 293.66, dur: 0.5 },  // D4
-            { freq: 261.63, dur: 1.0 },  // C4
-        ];
-        
-        let time = ctx.currentTime;
-        
-        notes.forEach((note) => {
-            const osc = ctx.createOscillator();
-            const gainNode = ctx.createGain();
-            
-            osc.connect(gainNode);
-            gainNode.connect(ctx.destination);
-            
-            osc.type = 'sine';
-            osc.frequency.value = note.freq;
-            gainNode.gain.value = this.volume * 0.1;  // 音量较低，作为背景
-            
-            osc.start(time);
-            osc.stop(time + note.dur - 0.01);
-            
-            this.currentOscillators.push(osc);
-            
-            // 清理旧的oscillator
-            setTimeout(() => {
-                const idx = this.currentOscillators.indexOf(osc);
-                if (idx > -1) this.currentOscillators.splice(idx, 1);
-            }, note.dur * 1000);
-            
-            time += note.dur;
+        // play() 返回 Promise：进入程序即调用可能被自动播放策略拒绝。
+        // 用 bgmLoading 占位防止手势重试期间重复调用，真正 resolve 后才置 isPlaying，
+        // 这样 audioInit 的手势兜底能判断音乐是否已响、决定是否继续重试
+        this.bgmLoading = true;
+        audio.play().then(() => {
+            this.bgmLoading = false;
+            this.isPlaying = true;
+            console.log('🎵 背景音乐开始播放');
+        }).catch((e) => {
+            this.bgmLoading = false;
+            this.isPlaying = false;
+            console.warn('背景音乐自动播放被浏览器拦截，将在用户交互后重试:', e);
         });
-        
-        // 循环播放
-        const totalDuration = notes.reduce((sum, n) => sum + n.dur, 0) * 1000;
-        setTimeout(() => {
-            this.playMelodyLoop();
-        }, totalDuration);
     },
     
     // 停止背景音乐
     stopBGM() {
         this.isPlaying = false;
-        this.stopAllSounds();
+        this.bgmLoading = false;
+        if (this.bgmAudio) {
+            if (typeof this.bgmAudio.pause === 'function') this.bgmAudio.pause();
+            this.bgmAudio.currentTime = 0;
+        }
         console.log('⏹️ 背景音乐停止');
     },
     
@@ -364,10 +351,9 @@ const SoundManager = {
     init() {
         try {
             this.applySettings();
-            const audioContext = this.getContext();
+            // 背景音乐用 <audio> 元素，不依赖 AudioContext；SFX 会在 play() 里按需创建，
+            // 故此处不再提前 getContext()，避免进入程序自动播放时产生"未激活的 AudioContext"警告
             console.log('🔊 音效系统已激活');
-            
-            // 开始播放背景音乐
             this.startBGM();
         } catch (e) {
             console.error('音频初始化失败:', e);
@@ -388,6 +374,14 @@ const SoundManager = {
         }
     },
     
+    // 点击"播放音乐"引导提示时调用：无视当前状态强制开启声音、持久化记住，并立即播放。
+    // 由真实点击手势触发，故 play() 不会被浏览器自动播放策略拦截。
+    enableAndPlay() {
+        UserData.updateSettings({ soundEnabled: true, bgmEnabled: true });
+        this.applySettings();
+        this.unmute();
+    },
+    
     // 静音
     mute() {
         this.bgmEnabled = false;
@@ -405,7 +399,7 @@ const SoundManager = {
     // 重置音效状态
     reset() {
         this.stopAllSounds();
-        this.isPlaying = false;
+        this.stopBGM();
         this.currentOscillators = [];
     }
 };

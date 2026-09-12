@@ -628,6 +628,48 @@ ${bundle}
     if (Game.state.coins !== coinsBeforeBack) fail('金币被重置了：' + coinsBeforeBack + ' -> ' + Game.state.coins + '（经济应当跨局保留）');
     else ok('金币跨局保留 ' + Game.state.coins + ' VC');
 
+    // 背景音乐改为真实音频文件循环播放（不再用振荡器合成旋律）
+    SoundManager.bgmEnabled = true;
+    SoundManager.isPlaying = false;
+    SoundManager.bgmLoading = false;
+    SoundManager.bgmAudio = null;
+    SoundManager.startBGM();
+    if (SoundManager.isPlaying !== true) fail('startBGM 没有置 isPlaying=true');
+    else ok('startBGM 置 isPlaying=true');
+    if (!SoundManager.bgmAudio) fail('startBGM 没有创建 bgmAudio 元素');
+    else {
+        if (SoundManager.bgmAudio.loop !== true) fail('BGM audio 未设置 loop=true（应循环播放）');
+        else ok('BGM audio loop=true 循环播放');
+        if (SoundManager.bgmAudio.src !== 'assets/bgm.mp3') fail('BGM 源不对: ' + SoundManager.bgmAudio.src);
+        else ok('BGM 源为 assets/bgm.mp3（相对路径，兼容 file:// 与子目录部署）');
+    }
+    if (typeof SoundManager.playMelodyLoop !== 'undefined') fail('旧的振荡器旋律 playMelodyLoop 应已移除');
+    else ok('旧的振荡器旋律 playMelodyLoop 已移除');
+    SoundManager.stopBGM();
+    if (SoundManager.isPlaying !== false) fail('stopBGM 没有复位 isPlaying');
+    else ok('stopBGM 复位 isPlaying');
+    if (typeof AudioInit.hideMusicHint !== 'function') fail('AudioInit.hideMusicHint 不是函数');
+    else { AudioInit.hideMusicHint(); ok('音乐引导提示可隐藏（hideMusicHint 调用无异常）'); }
+
+    // 点击引导提示的核心修复：enableAndPlay 应无视当前静音状态，强制开启声音、持久化并播放
+    SoundManager.bgmEnabled = false;
+    SoundManager.sfxEnabled = false;
+    SoundManager.isPlaying = false;
+    SoundManager.bgmLoading = false;
+    SoundManager.bgmAudio = null;
+    UserData.updateSettings({ soundEnabled: false, bgmEnabled: false }); // 模拟用户此前已静音
+    if (typeof SoundManager.enableAndPlay !== 'function') fail('SoundManager.enableAndPlay 不是函数');
+    else {
+        SoundManager.enableAndPlay();
+        if (SoundManager.bgmEnabled !== true || SoundManager.sfxEnabled !== true) fail('enableAndPlay 没有解除静音（bgmEnabled/sfxEnabled 应均为 true）');
+        else ok('enableAndPlay 解除静音（bgm+sfx 均开启）');
+        const settingsAfter = UserData.getSettings();
+        if (settingsAfter.soundEnabled !== true || settingsAfter.bgmEnabled !== true) fail('enableAndPlay 没有把开启状态持久化到存档');
+        else ok('enableAndPlay 持久化 soundEnabled/bgmEnabled=true');
+        if (SoundManager.isPlaying !== true) fail('enableAndPlay 没有触发播放（stub 无 play 方法应直接置 isPlaying=true）');
+        else ok('enableAndPlay 触发播放 isPlaying=true');
+    }
+
     console.log('\\n===== 无头跑测结果 =====');
     log.forEach(l => console.log(' ' + l));
     const fails = log.filter(l => l.startsWith('FAIL'));

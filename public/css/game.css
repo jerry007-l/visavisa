@@ -573,3 +573,52 @@ h2 {
     0% { transform: rotateY(0deg); }
     100% { transform: rotateY(360deg); }
 }
+
+/* 音乐引导提示：浏览器禁止无交互自动播放，放在"音效"按钮右侧、用左向箭头引导点击开启 */
+.menu-sound-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.music-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(178, 34, 52, 0.08);
+    color: #3C3B6E;
+    font-size: 0.95em;
+    font-weight: bold;
+    border: 2px dashed #B22234;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    animation: hintFadeIn 0.4s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+}
+
+.music-hint-arrow {
+    display: inline-block;
+    font-size: 1.2em;
+    animation: hintBounce 1s ease-in-out infinite;
+}
+
+.music-hint.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(8px);
+}
+
+@keyframes hintBounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-5px); }
+}
+
+@keyframes hintFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

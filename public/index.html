@@ -58,7 +58,16 @@
                 <button class="btn-primary" onclick="Game.startRoleSelect()">开始游戏</button>
                 <button class="btn-secondary" onclick="Game.showAchievements()">成就系统</button>
                 <button class="btn-secondary" onclick="Game.showStats()">数据统计</button>
-                <button class="btn-secondary" onclick="Game.toggleSound()">🔊 音效</button>
+                <div class="menu-sound-row">
+                    <button class="btn-secondary" onclick="Game.toggleSound()">🔊 音效</button>
+                    <!-- 音乐引导提示：浏览器禁止无交互自动播放，引导用户开启背景音乐。
+                         点击提示本身即解除静音并播放（SoundManager.enableAndPlay）；
+                         提示仅在音乐真正响起时隐藏、停止时重现，由 audioInit.js 监听 playing/pause 驱动 -->
+                    <div id="musicHint" class="music-hint" onclick="SoundManager.enableAndPlay()">
+                        <span class="music-hint-arrow">⬅️</span>
+                        <span>播放音乐，沉浸体验</span>
+                    </div>
+                </div>
             </div>
             <div class="coin-display">
                 💰 当前金币: <span id="MainMenuCoins">200</span> VC
