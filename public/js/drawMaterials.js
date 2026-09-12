@@ -1,6 +1,6 @@
 // 材料抽奖模块
 const DrawMaterials = {
-    // 进入抽奖界面时重置老虎机与确认按钮
+    // 进入抽奖界面时重置老虎机、抽奖按钮与确认按钮
     renderMaterials() {
         const slotMachine = document.getElementById('SlotMachine');
         if (slotMachine) {
@@ -9,6 +9,11 @@ const DrawMaterials = {
                 <div class="slot-item">🎰</div>
             `;
         }
+
+        // 抽完材料后 Game.drawMaterials() 会隐藏"开始抽奖"防止重复抽取；
+        // 本方法是进入本环节的唯一复位入口，这里把它恢复可见，保证新一局还能抽
+        const drawBtn = document.querySelector('#materialDraw .btn-primary');
+        if (drawBtn) drawBtn.style.display = '';
 
         const confirmBtn = document.querySelector('#materialDraw .btn-secondary');
         if (confirmBtn) confirmBtn.style.display = 'none';

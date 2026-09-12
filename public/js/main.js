@@ -148,8 +148,12 @@ const Game = {
         materials.forEach(mat => {
             this.state.materialFake[mat.id] = guilty && Math.random() < mat.fakeChance * skill;
         });
-            
-            
+
+        // 抽完即锁定：隐藏"开始抽奖"，防止本局重复抽取刷新材料；
+        // 下一局进入本环节时由 DrawMaterials.renderMaterials() 复位重新显示
+        const drawBtn = document.querySelector('#materialDraw .btn-primary');
+        if (drawBtn) drawBtn.style.display = 'none';
+
         // 显示确认按钮
         const confirmBtn = document.querySelector('#materialDraw .btn-secondary');
         if (confirmBtn) {
