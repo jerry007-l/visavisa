@@ -22,10 +22,10 @@ const RandomEvents = {
             <div class="event-description">${description}</div>
         `;
         
+        // 选项效果不预先印在按钮上，选完后由结果弹窗统一展示
         document.getElementById('EventChoices').innerHTML = choices.map((choice, index) => `
             <button class="btn-event-choice" onclick="RandomEvents.choose(${index})">
                 ${choice.text}
-                <small>${choice.consequence || ''}</small>
             </button>
         `).join('');
     },
@@ -53,16 +53,19 @@ const RandomEvents = {
             : amount;
         
         const scoreWord = isOfficer ? '准确度' : '信任度';
+        // 弹窗要展示的效果：先放选项自带的效果说明，再补运行时才算出的实际结果
+        const effects = [];
+        if (choice.consequence) effects.push(choice.consequence);
         
         if (choice.risky) {
             // 高风险选择：五五开
             if (Math.random() < 0.5) {
                 Game.state.score += 10;
-                this.note(`✅ 赌赢了！${scoreWord}+10`);
+                effects.push(`✅ 赌赢了！${scoreWord}+10`);
                 SoundManager.play('success');
             } else {
                 Game.state.score += soften(-15);
-                this.note(`❌ 赌输了！${scoreWord}${soften(-15)}`);
+                effects.push(`❌ 赌输了！${scoreWord}${soften(-15)}`);
                 SoundManager.play('fail');
             }
         } else if (choice.trustChange) {
@@ -78,22 +81,34 @@ const RandomEvents = {
             if (isOfficer) {
                 Game.revealClue(1);
             } else {
-                this.note('💡 你说漏了嘴，暴露了一些线索！');
+                effects.push('💡 你说漏了嘴，暴露了一些线索！');
             }
             SoundManager.play('alert');
         }
         
+        this.showOutcome(choice, effects);
         setTimeout(() => this.leave(), 2000);
     },
     
-    // 事件结果就地写进事件面板：选择后界面只停留约 2 秒，这是玩家看到结果的唯一窗口
-    note(text) {
-        const box = document.getElementById('EventContent');
-        if (box) box.insertAdjacentHTML('beforeend', `<div class="event-outcome">${text}</div>`);
+    // 选择后弹出结果弹窗：选项效果不再预先印在按钮上，改在这里集中展示约 2 秒
+    showOutcome(choice, effects) {
+        const overlay = document.getElementById('EventOutcomeModal');
+        const chosenEl = document.getElementById('EventOutcomeChosen');
+        const bodyEl = document.getElementById('EventOutcomeBody');
+        if (!overlay || !chosenEl || !bodyEl) return;
+        
+        chosenEl.textContent = choice.text;
+        bodyEl.innerHTML = effects.length
+            ? effects.map(line => `<div class="event-modal-line">${line}</div>`).join('')
+            : '<div class="event-modal-line">没有造成任何影响</div>';
+        overlay.style.display = 'flex';
     },
 
     // 离开事件界面，回到对话环节并把被打断的那一题续上
     leave() {
+        // 弹窗是全屏遮罩，离开时必须关掉，否则会残留在下一环节之上
+        const overlay = document.getElementById('EventOutcomeModal');
+        if (overlay) overlay.style.display = 'none';
         Game.showScreen('dialogue');
         if (typeof Dialogue !== 'undefined' && Dialogue.resumeAfterEvent) {
             Dialogue.resumeAfterEvent();

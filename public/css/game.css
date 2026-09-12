@@ -115,10 +115,6 @@ body::after {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.game-title::before {
-    content: '🦅 ';
-}
-
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
@@ -461,15 +457,6 @@ h2 {
     min-height: 100px;
 }
 
-.event-outcome {
-    margin-top: 12px;
-    padding: 10px;
-    background: #F8F9FA;
-    border-radius: 8px;
-    font-weight: bold;
-    color: #3C3B6E;
-}
-
 .event-choices {
     display: flex;
     flex-direction: column;
@@ -498,12 +485,52 @@ h2 {
     border-color: #B22234;
 }
 
-.btn-event-choice small {
-    display: block;
-    margin-top: 5px;
+/* 事件结果弹窗：选择后浮在最上层展示已选选项的效果，2 秒后自动关闭 */
+.event-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.event-modal {
+    background: white;
+    border-radius: 15px;
+    padding: 25px 30px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.event-modal-title {
+    font-size: 1.05em;
+    font-weight: bold;
     color: #7F8C8D;
-    font-size: 0.85em;
-    font-weight: normal;
+    margin-bottom: 8px;
+}
+
+.event-modal-chosen {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #3C3B6E;
+    margin-bottom: 15px;
+}
+
+.event-modal-line {
+    margin: 8px 0;
+    padding: 10px;
+    background: #F8F9FA;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #3C3B6E;
 }
 
 /* 决策界面 */
