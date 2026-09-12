@@ -26,8 +26,9 @@ const DrawMaterials = {
 
         slotMachine.innerHTML = materials.map(mat => `
             <div class="slot-item">
-                <div style="font-size: 2.5em;">${mat.icon}</div>
-                <div style="font-size: 0.9em; margin-top: 6px;">${mat.name}</div>
+                <!-- 用 rem 而非 em：.slot-item 自身 5em，em 会叠乘把图标/名称放得巨大 -->
+                <div style="font-size: 3.5rem;">${mat.icon}</div>
+                <div style="font-size: 1rem; margin-top: 6px;">${mat.name}</div>
             </div>
         `).join('');
     },
