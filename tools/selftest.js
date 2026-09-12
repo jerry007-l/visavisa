@@ -576,6 +576,16 @@ ${bundle}
     const unlockHtml = document.getElementById('AchievementUnlocks').innerHTML;
     if (Achievement.justUnlocked.length === 0 && unlockHtml.trim() !== '') fail('本局没新成就却仍显示了"新成就解锁"');
     else ok('checkUnlocks 只展示本局新解锁的成就');
+    Achievement.showList();
+    const achListHtml = document.getElementById('AchievementList').innerHTML;
+    if ((achListHtml.match(/achievement-card-name/g) || []).length !== ACHIEVEMENTS.length) fail('成就列表没有渲染全部成就');
+    else ok('成就列表渲染全部 ' + ACHIEVEMENTS.length + ' 个成就');
+    if (!document.getElementById('AchievementProgress').textContent.includes('/' + ACHIEVEMENTS.length)) fail('成就进度未显示总数');
+    else ok('成就进度显示解锁数/总数');
+    if (achSrc.includes('alert(')) fail('成就列表仍在用 alert 弹窗，内容会被截断');
+    else ok('成就列表不再依赖 alert 弹窗');
+    if (Game.state.screen !== 'achievementScreen') fail('showList 没有切到成就界面');
+    else ok('showList 切到成就界面');
 
     // ===== 存档迁移：老存档缺字段不能崩 =====
     localStorage.setItem('visaGame', JSON.stringify({ coins: 500, stats: { gamesPlayed: 3, wins: 1, losses: 2 } }));

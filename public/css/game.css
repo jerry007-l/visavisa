@@ -644,3 +644,75 @@ h2 {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+/* 成就界面 */
+.achievement-container {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 720px;
+    width: 92%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(60, 59, 110, 0.4);
+    border-top: 5px solid #B22234;
+    border-bottom: 5px solid #3C3B6E;
+}
+
+.achievement-container h2 {
+    color: #3C3B6E;
+    margin-bottom: 6px;
+}
+
+.achievement-progress {
+    color: #7F8C8D;
+    margin-bottom: 18px;
+}
+
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    text-align: left;
+    margin-bottom: 22px;
+}
+
+.achievement-card {
+    border-radius: 12px;
+    padding: 14px;
+    background: #F8F9FA;
+    border: 2px solid transparent;
+}
+
+.achievement-card.unlocked {
+    background: #FFF8E1;
+    border-color: #F1C40F;
+}
+
+.achievement-card.locked {
+    opacity: 0.65;
+}
+
+.achievement-card-name {
+    font-weight: bold;
+    color: #2C3E50;
+    margin-bottom: 6px;
+}
+
+.achievement-card-desc {
+    font-size: 0.88em;
+    color: #7F8C8D;
+    margin-bottom: 8px;
+}
+
+.achievement-card-state {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.achievement-card.unlocked .achievement-card-state {
+    color: #27AE60;
+}
+
+.achievement-card.locked .achievement-card-state {
+    color: #95A5A6;
+}

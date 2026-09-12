@@ -87,14 +87,25 @@ const Achievement = {
 
     showList() {
         const data = UserData.getData();
-        const unlocked = ACHIEVEMENTS.filter(a => data.achievements.includes(a.id)).length;
+        const unlockedCount = ACHIEVEMENTS.filter(a => data.achievements.includes(a.id)).length;
 
-        let html = `🏆 成就系统 (${unlocked}/${ACHIEVEMENTS.length})\n\n`;
-        ACHIEVEMENTS.forEach(achievement => {
-            const isUnlocked = data.achievements.includes(achievement.id);
-            html += `${isUnlocked ? '✅' : '⬜'} ${achievement.name}\n   ${achievement.desc}\n\n`;
-        });
+        const progress = document.getElementById('AchievementProgress');
+        if (progress) progress.textContent = `已解锁 ${unlockedCount}/${ACHIEVEMENTS.length}`;
 
-        alert(html);
+        const list = document.getElementById('AchievementList');
+        if (list) {
+            list.innerHTML = ACHIEVEMENTS.map(achievement => {
+                const isUnlocked = data.achievements.includes(achievement.id);
+                return `
+                    <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'}">
+                        <div class="achievement-card-name">${achievement.name}</div>
+                        <div class="achievement-card-desc">${achievement.desc}</div>
+                        <div class="achievement-card-state">${isUnlocked ? '✅ 已解锁' : '🔒 未解锁'}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        Game.showScreen('achievementScreen');
     }
 };
